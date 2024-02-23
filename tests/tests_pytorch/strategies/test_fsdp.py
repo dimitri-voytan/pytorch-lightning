@@ -373,9 +373,10 @@ def test_fsdp_strategy_full_state_dict(tmpdir, wrap_min_params):
         ),
     ],
 )
-def test_fsdp_checkpoint_multi_gpus(tmpdir, model, strategy, strategy_cfg):
+@pytest.mark.parametrize("save_weights_only", [True, False], ids=["weights_only", "full_model"])
+def test_fsdp_checkpoint_multi_gpus(tmpdir, model, strategy, strategy_cfg, save_weights_only):
     """Test to ensure that checkpoint is saved correctly when using multiple GPUs, and all stages can be run."""
-    ck = ModelCheckpoint(save_last=True)
+    ck = ModelCheckpoint(save_last=True, save_weights_only=save_weights_only)
 
     strategy_cfg = strategy_cfg or {}
     if not isinstance(strategy, str):
